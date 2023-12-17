@@ -1,8 +1,3 @@
-import React from "react";
-// eslint-disable-next-line
-import { Row, Col, Container } from "react-bootstrap";
-import Product from "../components/Product";
-
 export const products = [
   {
     _id: "1",
@@ -83,18 +78,3 @@ export const products = [
     numReviews: 12,
   },
 ];
-
-export default function HomeScreen() {
-  return (
-    <>
-      <h1>Latest Products</h1>
-      <Row>
-        {products?.map((product, index) => (
-          <Col key={product?._id} sm={12} md={6} lg={4} xl={3}>
-            <Product product={product} />
-          </Col>
-        ))}
-      </Row>
-    </>
-  );
-}
