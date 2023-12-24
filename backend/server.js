@@ -15,5 +15,10 @@ app.get("/", (req, res) => {
 app.get("/api/products", (req, res) => {
   res.json(products);
 });
+app.get("/api/products/:id", (req, res) => {
+  const { id } = req.params;
+  const productData = products.find((data) => data._id === id);
+  res.json(productData);
+});
 
 app.listen(port, console.log(`Server running on port ${port}`));
