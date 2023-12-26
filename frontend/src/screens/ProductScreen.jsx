@@ -1,26 +1,39 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
-
-import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  Form,
+} from "react-bootstrap";
 import Rating from "../components/Rating";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
 import { useGetProductByIdQuery } from "../slices/productsApiSlice";
+import { addToCart } from "../slices/cartSlice";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
-
+  const [qty, setQty] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     data: product,
     isLoading,
     isError: error,
   } = useGetProductByIdQuery(productId);
 
-  // console.log("product", product);
+  // console.log("product", [...Array(product?.countInStock).keys()]);
 
   const addToCartHandler = () => {
     console.log("added to cart");
+    addToCart(dispatch(addToCart({ ...product, qty })));
+    // navigate();
   };
   return (
     <React.Fragment>
@@ -77,6 +90,26 @@ const ProductScreen = () => {
                   </Row>
                 </ListGroup.Item>
 
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>QTY</Col>
+                      <Col>
+                        <Form.Control
+                          as="select"
+                          value={qty}
+                          onChange={(e) => setQty(Number(e.target.value))}
+                        >
+                          {[...Array(product.countInStock).keys()]?.map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
                 <ListGroup.Item>
                   <Button
                     className="btn-block"
