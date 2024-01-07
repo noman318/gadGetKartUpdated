@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import Message from "../components/Message";
-import { addToCart } from "../slices/cartSlice";
+import { addToCart, removeFromCart } from "../slices/cartSlice";
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -22,7 +22,16 @@ const CartScreen = () => {
 
   const addToCartHandler = async (product, qty) => {
     console.log("update the cart");
-    addToCart(dispatch(addToCart({ ...product, qty })));
+    dispatch(addToCart({ ...product, qty }));
+  };
+
+  const removeFromCartHandler = (id) => {
+    dispatch(removeFromCart(id));
+  };
+
+  const checkOutHandler = () => {
+    console.log("checking out");
+    navigate(`/login?redirect=shipping`);
   };
   return (
     <Row>
@@ -63,7 +72,7 @@ const CartScreen = () => {
                     <Button
                       type="button"
                       variant="light"
-                      // onClick={() => removeFromCartHandler(item._id)}
+                      onClick={() => removeFromCartHandler(cart._id)}
                     >
                       <FaTrash />
                     </Button>
@@ -88,7 +97,11 @@ const CartScreen = () => {
                 .toFixed(2)}
             </ListGroup.Item>
             <ListGroup.Item>
-              <Button className="btn-block" disabled={cartItems.length === 0}>
+              <Button
+                className="btn-block"
+                disabled={cartItems.length === 0}
+                onClick={() => checkOutHandler()}
+              >
                 Proceed to Checkout
               </Button>
             </ListGroup.Item>
