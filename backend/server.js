@@ -13,6 +13,7 @@ connectToDb();
 const app = express();
 const port = 5000;
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.json("API is running");
