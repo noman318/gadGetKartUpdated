@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Row,
   Col,
@@ -31,11 +31,25 @@ const ProductScreen = () => {
   // console.log("product.countInStock", [Array(product?.countInStock)]);
   // console.log("product.countInStock", [...Array(product?.countInStock)]);
   // console.log("product", [...Array(product?.countInStock).keys()]);
+  const { cartItems } = useSelector((state) => state.cart);
+  // console.log("cartItems", cartItems);
+  const existItem = cartItems?.find(
+    (data) => data._id === productId && data.qty >= qty
+  );
+  // console.log("existItem", existItem);
+  // const myValue = existItem;
+  // if (myValue) {
+  //   // The value is truthy
+  //   console.log("Truthy!");
+  // } else {
+  //   // The value is falsy
+  //   console.log("Falsy!");
+  // }
 
   const addToCartHandler = () => {
     console.log("added to cart");
     addToCart(dispatch(addToCart({ ...product, qty })));
-    // navigate();
+    navigate("/cart");
   };
   return (
     <React.Fragment>
@@ -114,12 +128,12 @@ const ProductScreen = () => {
                 )}
                 <ListGroup.Item>
                   <Button
-                    className="btn-block"
+                    className="btn btn-block"
                     type="button"
-                    disabled={product.countInStock === 0}
+                    disabled={existItem ? true : product.countInStock === 0}
                     onClick={addToCartHandler}
                   >
-                    Add To Cart
+                    {existItem ? "Already Added to Cart" : "Add To Cart"}
                   </Button>
                 </ListGroup.Item>
               </ListGroup>

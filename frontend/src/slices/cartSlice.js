@@ -13,12 +13,15 @@ const cartSlice = createSlice({
       const item = action.payload;
       const existItem = state.cartItems?.find((cart) => cart?._id === item._id);
       if (existItem) {
+        state.error = "Item already exists in the cart";
         state.cartItems = state.cartItems?.map((cart) =>
           cart._id === existItem._id ? item : cart
         );
       } else {
+        state.error = "";
         state.cartItems = [...state.cartItems, item];
       }
+      console.log("state", state.error);
 
       // Item Price
       return updateCart(state);
