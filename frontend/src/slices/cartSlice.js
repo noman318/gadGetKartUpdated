@@ -11,18 +11,17 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const item = action.payload;
-      const existItem = state.cartItems?.find((x) => x._id === item._id);
+      const existItem = state.cartItems?.find((cart) => cart?._id === item._id);
       if (existItem) {
-        state.cartItems = state.cartItems?.map((x) =>
-          x._id === existItem._id ? item : x
+        state.cartItems = state.cartItems?.map((cart) =>
+          cart._id === existItem._id ? item : cart
         );
       } else {
         state.cartItems = [...state.cartItems, item];
       }
 
       // Item Price
-      console.log("state", state);
-      return updateCart(state, item);
+      return updateCart(state);
     },
   },
 });

@@ -19,7 +19,7 @@ import { addToCart } from "../slices/cartSlice";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
-  const [qty, setQty] = useState(0);
+  const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -27,7 +27,9 @@ const ProductScreen = () => {
     isLoading,
     isError: error,
   } = useGetProductByIdQuery(productId);
-
+  // console.log("qty", qty);
+  // console.log("product.countInStock", [Array(product?.countInStock)]);
+  // console.log("product.countInStock", [...Array(product?.countInStock)]);
   // console.log("product", [...Array(product?.countInStock).keys()]);
 
   const addToCartHandler = () => {
