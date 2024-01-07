@@ -1,4 +1,5 @@
 import User from "../models/User.model.js";
+import jwt from "jsonwebtoken";
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -8,9 +9,21 @@ const loginUser = async (req, res) => {
     );
     if (user && (await user.matchPassword(password))) {
       // console.log("user", user);
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "30d",
+      });
+
+      // Set jwt as http only cookie
+
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
       const { id, name, email, isAdmin } = user;
       const newUser = { id, name, email, isAdmin };
-      console.log("newUser", newUser);
+      // console.log("newUser", newUser);
       res.json(newUser);
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -25,7 +38,11 @@ const registerUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.json({ message: "LoggedOut" });
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: "Logged Out successfully" });
 };
 
 const getUserProfile = async (req, res) => {
