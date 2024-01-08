@@ -13,7 +13,7 @@ const LoginScreen = () => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const { userInfo } = useSelector((state) => state?.auth);
+  const { userInformation } = useSelector((state) => state?.auth);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,10 +22,10 @@ const LoginScreen = () => {
   const searchParams = new URLSearchParams(search);
   const redirect = searchParams.get("redirect") || "/";
   useEffect(() => {
-    if (userInfo) {
+    if (userInformation) {
       navigate(redirect);
     }
-  }, [navigate, redirect, userInfo]);
+  }, [navigate, redirect, userInformation]);
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
