@@ -7,7 +7,8 @@ import { useSelector } from "react-redux";
 
 export default function Header() {
   const { cartItems } = useSelector((state) => state.cart);
-  // console.log("cart", cartItems.length);
+  const { userInfo } = useSelector((state) => state?.auth);
+  console.log("userInfo", userInfo);
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
