@@ -1,5 +1,5 @@
 import User from "../models/User.model.js";
-import jwt from "jsonwebtoken";
+import generateToken from "../utils/generateToken.js";
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -8,22 +8,9 @@ const loginUser = async (req, res) => {
       "id name email isAdmin password"
     );
     if (user && (await user.matchPassword(password))) {
-      // console.log("user", user);
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "30d",
-      });
-
-      // Set jwt as http only cookie
-
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      });
+      generateToken(res, user._id);
       const { id, name, email, isAdmin } = user;
       const newUser = { id, name, email, isAdmin };
-      // console.log("newUser", newUser);
       res.json(newUser);
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -34,7 +21,25 @@ const loginUser = async (req, res) => {
   }
 };
 const registerUser = async (req, res) => {
-  res.json({ message: "REGISTERNG" });
+  const { email, name, password } = req.body;
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return res.status(400).json({ message: "User already exist" });
+  }
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+  if (user) {
+    generateToken(res, user._id);
+    const { _id, name, email, isAdmin } = user;
+    const newUser = { _id, name, email, isAdmin };
+
+    res.status(201).json(newUser);
+  } else {
+    res.status(400).json({ messgae: "Invalid user data" });
+  }
 };
 
 const logout = async (req, res) => {
