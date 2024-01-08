@@ -22,23 +22,28 @@ const loginUser = async (req, res) => {
 };
 const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    return res.status(400).json({ message: "User already exist" });
-  }
-  const user = await User.create({
-    name,
-    email,
-    password,
-  });
-  if (user) {
-    generateToken(res, user._id);
-    const { _id, name, email, isAdmin } = user;
-    const newUser = { _id, name, email, isAdmin };
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exist" });
+    }
+    const user = await User.create({
+      name,
+      email,
+      password,
+    });
+    if (user) {
+      generateToken(res, user._id);
+      const { _id, name, email, isAdmin } = user;
+      const newUser = { _id, name, email, isAdmin };
 
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).json({ messgae: "Invalid user data" });
+      res.status(201).json(newUser);
+    } else {
+      res.status(400).json({ messgae: "Invalid user data" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -51,11 +56,43 @@ const logout = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-  res.json({ message: "get userProfile User" });
+  // console.log("req.user._id", req.user._id);
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      const { _id, name, email, isAdmin } = user;
+      const newUser = { _id, name, email, isAdmin };
+      res.status(201).json(newUser);
+    } else {
+      res.status(400).json({ messgae: "User Not Found" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 const updateUserProfile = async (req, res) => {
-  res.json({ message: "update user profile" });
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.email = req.body.email || user.email;
+      user.name = req.body.name || user.name;
+      if (req.body.password) {
+        user.password || req.user.password;
+      }
+
+      const updatedUser = await user.save();
+      const { _id, name, email, isAdmin } = updatedUser;
+      const newUser = { _id, name, email, isAdmin };
+      res.status(200).json(newUser);
+    } else {
+      res.status(400).json({ messgae: "User Not Found" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 const getAllUsers = async (req, res) => {
