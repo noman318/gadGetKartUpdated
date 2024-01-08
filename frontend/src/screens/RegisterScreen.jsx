@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
@@ -13,6 +13,9 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const { userInformation } = useSelector((state) => state?.auth);
 
   const [register, { isLoading }] = useRegisterMutation();
@@ -31,7 +34,7 @@ const RegisterScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Password and Confirm Password do not match");
+      toast.error("Passwords do not match");
     } else {
       try {
         const res = await register({ name, email, password }).unwrap();
@@ -47,6 +50,15 @@ const RegisterScreen = () => {
       }
     }
   };
+
+  const handleTogglePassword = (field) => {
+    if (field === "password") {
+      setShowPassword(!showPassword);
+    } else if (field === "confirmPassword") {
+      setShowConfirmPassword(!showConfirmPassword);
+    }
+  };
+
   return (
     <FormContainer>
       <h1>Register</h1>
@@ -73,21 +85,37 @@ const RegisterScreen = () => {
 
         <Form.Group className="my-2" controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
+          <InputGroup>
+            <Form.Control
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              variant="outline-secondary"
+              onClick={() => handleTogglePassword("password")}
+            >
+              {showPassword ? "Hide" : "Show"} Password
+            </Button>
+          </InputGroup>
         </Form.Group>
         <Form.Group className="my-2" controlId="confirmPassword">
           <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          ></Form.Control>
+          <InputGroup>
+            <Form.Control
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              variant="outline-secondary"
+              onClick={() => handleTogglePassword("confirmPassword")}
+            >
+              {showConfirmPassword ? "Hide" : "Show"} Password
+            </Button>
+          </InputGroup>
         </Form.Group>
 
         <Button disabled={isLoading} type="submit" variant="primary">

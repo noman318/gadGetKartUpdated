@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [login, { isLoading }] = useLoginMutation();
 
@@ -41,6 +42,10 @@ const LoginScreen = () => {
       toast.error(error?.data?.message || error?.error);
     }
   };
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <FormContainer>
       <h1>Sign In</h1>
@@ -58,12 +63,17 @@ const LoginScreen = () => {
 
         <Form.Group className="my-2" controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
+          <InputGroup>
+            <Form.Control
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button variant="outline-secondary" onClick={handleTogglePassword}>
+              {showPassword ? "Hide" : "Show"} Password
+            </Button>
+          </InputGroup>
         </Form.Group>
 
         <Button
