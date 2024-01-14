@@ -1,7 +1,7 @@
 import User from "../models/User.model.js";
 import generateToken from "../utils/generateToken.js";
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email }).select(
@@ -13,19 +13,23 @@ const loginUser = async (req, res) => {
       const newUser = { id, name, email, isAdmin };
       res.json(newUser);
     } else {
+      throw new Error("Invalid email or password");
+
       res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    // res.status(500).json({ message: "Internal Server Error" });
+    next(error);
   }
 };
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   const { email, name, password } = req.body;
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "User already exist" });
+      res.status(400);
+      throw new Error("User Already Exist");
     }
     const user = await User.create({
       name,
@@ -39,11 +43,14 @@ const registerUser = async (req, res) => {
 
       res.status(201).json(newUser);
     } else {
-      res.status(400).json({ messgae: "Invalid user data" });
+      throw new Error("Invalid user data");
+
+      // res.status(400).json({ messgae: "Invalid user data" });
     }
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    next(error);
+    // res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -55,7 +62,7 @@ const logout = async (req, res) => {
   res.status(200).json({ message: "Logged Out successfully" });
 };
 
-const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res, next) => {
   // console.log("req.user._id", req.user._id);
   try {
     const user = await User.findById(req.user._id);
@@ -64,15 +71,18 @@ const getUserProfile = async (req, res) => {
       const newUser = { _id, name, email, isAdmin };
       res.status(201).json(newUser);
     } else {
-      res.status(400).json({ messgae: "User Not Found" });
+      res.status(400);
+      throw new Error("User Not Found");
+      // .json({ messgae: "User Not Found" });
     }
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    next(error);
+    // res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (user) {
@@ -87,34 +97,40 @@ const updateUserProfile = async (req, res) => {
       const newUser = { _id, name, email, isAdmin };
       res.status(200).json(newUser);
     } else {
-      res.status(400).json({ messgae: "User Not Found" });
+      throw new Error("User Not Found");
+      // res.status(400).json({ messgae: "User Not Found" });
     }
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    next(error);
+    // res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const usersData = await User.find({}).select("-password");
     // console.log("usersData", usersData);
-    return res.json(usersData);
+    if (usersData) {
+      return res.json(usersData);
+    }
+    throw new Error("Users Not Found");
   } catch (error) {
     console.log("error", error);
-    throw new Error("Users Not Found");
+    next(error);
+    // throw new Error("Users Not Found");
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   res.json({ message: "get user Data" });
 };
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   res.json({ message: "delete user" });
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   res.json({ message: "get user Data" });
 };
 
