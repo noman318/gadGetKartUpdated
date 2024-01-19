@@ -22,8 +22,8 @@ const sendForgotPasswordMail = async (user) => {
   const mailSent = await transporter.sendMail({
     from: process.env.EMAIL_ID,
     to: user.email,
-    subject: "Testing Email ✔",
-    text: "Testing Email world?",
+    subject: "Forgot Password ✔",
+    text: "Email for forgot password?",
     html: forgetTemplate(user),
   });
   console.log("mailSent", mailSent);
