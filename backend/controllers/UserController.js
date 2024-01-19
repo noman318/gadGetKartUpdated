@@ -1,4 +1,5 @@
 import User from "../models/User.model.js";
+import { sendForgotPasswordMail } from "../services/mailService.js";
 import generateToken from "../utils/generateToken.js";
 
 const loginUser = async (req, res, next) => {
@@ -20,6 +21,25 @@ const loginUser = async (req, res, next) => {
   } catch (error) {
     console.error("Error during login:", error);
     // res.status(500).json({ message: "Internal Server Error" });
+    next(error);
+  }
+};
+
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+  console.log("email", email);
+  try {
+    const user = await User.findOne({ email }).select("id name email isAdmin");
+    // console.log("user", user);
+    if (user) {
+      const sendingMail = await sendForgotPasswordMail(user);
+      console.log("sendingMail", sendingMail);
+      res.json({ message: "Email send" });
+    } else {
+      throw new Error("Invalid Email");
+    }
+  } catch (error) {
+    console.error("Error while Sending Mail:", error);
     next(error);
   }
 };
@@ -144,4 +164,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  forgotPassword,
 };
