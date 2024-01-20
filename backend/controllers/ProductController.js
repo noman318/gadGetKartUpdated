@@ -4,7 +4,7 @@ const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.find({});
     if (products) {
-      res.json(products);
+      return res.json(products);
     }
     throw new Error("Products not found try again");
   } catch (error) {
