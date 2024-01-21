@@ -5,8 +5,9 @@ const getUserOrders = async (req, res, next) => {
     const orders = await Order.find({ user: req.user._id });
     if (orders) {
       res.status(200).json(orders);
+    } else {
+      throw new Error("No Orders Found");
     }
-    throw new Error("No Orders Found");
   } catch (error) {
     next(error);
     console.log("error", error);
