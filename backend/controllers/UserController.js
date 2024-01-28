@@ -32,8 +32,7 @@ const forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email }).select("id name email isAdmin");
     // console.log("user", user);
     if (user) {
-      const sendingMail = await sendForgotPasswordMail(user);
-      console.log("sendingMail", sendingMail);
+      await sendForgotPasswordMail(user);
       res.json({ message: "Email send" });
     } else {
       throw new Error("Invalid Email");
