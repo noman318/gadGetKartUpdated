@@ -24,12 +24,14 @@ import PaymentScreen from "./screens/PaymentScreent";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import ForgotPassword from "./screens/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword";
+import OrderScreen from "./screens/OrderScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} path="/" element={<HomeScreen />} />
       <Route path="/product/:id" element={<ProductScreen />} />
+      <Route path="/order/:id" element={<OrderScreen />} />
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
