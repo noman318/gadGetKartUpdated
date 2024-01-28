@@ -88,7 +88,8 @@ const signupTemplate = (data) => {
       `;
 };
 
-const forgetTemplate = (data) => {
+const forgetTemplate = (data, token) => {
+  //   console.log("tokenInTemplte", token);
   return `
        <!DOCTYPE html>
         <html lang="en">
@@ -133,7 +134,7 @@ const forgetTemplate = (data) => {
             <p>Hi ${data?.name},</p>
             <div style="padding: 30px 0px">
                 <a
-                href=${data?.url}
+                href="http://127.0.0.1:3000/reset-password?token=${token}"
                 style="
                 background-color: #7f56d9;
                 color: #ffffff;

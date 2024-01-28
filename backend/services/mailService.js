@@ -16,15 +16,16 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD,
   },
 });
-const sendForgotPasswordMail = async (user) => {
+const sendForgotPasswordMail = async (user, token) => {
   // console.log("EmailInFunction", user.email);
+  // console.log("tokenInForgotFunction", token);
   // return;
   const mailSent = await transporter.sendMail({
     from: process.env.EMAIL_ID,
     to: user.email,
     subject: "Forgot Password ✔",
     text: "Email for forgot password?",
-    html: forgetTemplate(user),
+    html: forgetTemplate(user, token),
   });
   console.log("mailSent", mailSent);
 };
