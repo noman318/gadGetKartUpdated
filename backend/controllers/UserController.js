@@ -51,7 +51,7 @@ const forgotPassword = async (req, res, next) => {
 const resetPassword = async (req, res, next) => {
   const { token } = req.query;
   const { password } = req.body;
-  console.log("passwordFromBody", password);
+  // console.log("passwordFromBody", password);
 
   if (!token) {
     return res.status(400).json({ message: "Token is required" });
@@ -60,13 +60,13 @@ const resetPassword = async (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decodedToken.userId;
     const user = await User.findById(userId);
-    console.log("user", user);
+    // console.log("user", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else if (req.body.password) {
       user.password = password;
       const updatedUser = await user.save();
-      console.log("userData", updatedUser);
+      // console.log("userData", updatedUser);
       return res.json({ updatedUser });
     }
   } catch (error) {
