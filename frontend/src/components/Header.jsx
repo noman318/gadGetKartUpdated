@@ -22,7 +22,7 @@ export default function Header() {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      toast.success("logged Out Successfully");
+      toast.success("Logged Out Successfully");
       setTimeout(() => {
         navigate("/login");
       }, 3000);

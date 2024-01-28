@@ -20,10 +20,9 @@ const ForgotPassword = () => {
       console.log("res", res);
       //   dispatch(setCredentials({ ...res }));
       toast.success(res.message);
-      toast.info("Check your mail box to reset your password");
-      //   setTimeout(() => {
-      //     navigate("/");
-      //   }, 3000);
+      setTimeout(() => {
+        toast.info("Check your mail inbox to reset your password");
+      }, 3000);
     } catch (error) {
       console.log("error", error);
       toast.error(error?.data?.message || error?.error);
