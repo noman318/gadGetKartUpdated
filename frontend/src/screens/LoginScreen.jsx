@@ -95,6 +95,9 @@ const LoginScreen = () => {
             Register
           </Link>
         </Col>
+        <Col>
+          Forgot Password? <Link to={"/forgot-password"}>Forgot Password</Link>
+        </Col>
       </Row>
     </FormContainer>
   );

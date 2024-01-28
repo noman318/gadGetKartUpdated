@@ -27,7 +27,7 @@ const sendForgotPasswordMail = async (user, token) => {
     text: "Email for forgot password?",
     html: forgetTemplate(user, token),
   });
-  console.log("mailSent", mailSent);
+  // console.log("mailSent", mailSent);
 };
 
 export { transporter, sendForgotPasswordMail };
