@@ -132,7 +132,7 @@ const forgetTemplate = (data) => {
             <h1>Forgot Password</h1>
             <p>Hi ${data?.name},</p>
             <div style="padding: 30px 0px">
-                    <a
+                <a
                 href=${data?.url}
                 style="
                 background-color: #7f56d9;
@@ -152,7 +152,7 @@ const forgetTemplate = (data) => {
 
             <p style="margin-top: 40px">
                 Thanks <br />
-                <strong>Noman The Dev</strong>
+                <strong>Prince Engg.</strong>
             </p>
             </div>
         </body>

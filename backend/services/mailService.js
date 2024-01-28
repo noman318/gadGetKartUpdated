@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 const sendForgotPasswordMail = async (user) => {
-  console.log("EmailInFunction", user.email);
+  // console.log("EmailInFunction", user.email);
   // return;
   const mailSent = await transporter.sendMail({
     from: process.env.EMAIL_ID,
