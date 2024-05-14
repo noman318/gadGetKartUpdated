@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
+import { Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
@@ -31,12 +31,12 @@ const OrderScreen = () => {
   const { userInformation } = useSelector((state) => state?.auth);
   console.log("paypal", paypal);
   useEffect(() => {
-    if (!payPalError && !payPalLoading && !paypal?.clientId) {
+    if (!payPalError && !payPalLoading && paypal?.clientId) {
       const loadPayPalScript = async () => {
         payPalDispatch({
           type: "resetOptions",
           value: {
-            clientId: paypal?.clientId,
+            "client-id": paypal?.clientId,
             currency: "USD",
           },
         });
@@ -48,8 +48,46 @@ const OrderScreen = () => {
         }
       }
     }
-  }, [order, payPalDispatch, payPalError, payPalLoading, paypal?.clientId]);
+  }, [order, payPalDispatch, payPalError, payPalLoading, paypal]);
   //   console.log("order", order);
+  // TESTING ONLY! REMOVE BEFORE PRODUCTION
+  // async function onApproveTest() {
+  //   await payOrder({ orderId, details: { payer: {} } });
+  //   refetch();
+
+  //   toast.success("Order is paid");
+  // }
+
+  async function onApprove(data, actions) {
+    return actions.order.capture().then(async function (details) {
+      try {
+        await payOrder({ orderId, details });
+        refetch();
+        toast.success("Payment Successfull");
+      } catch (error) {
+        toast.error(error?.data?.message || error?.message);
+      }
+    });
+  }
+
+  async function onError(err) {
+    toast.error(`Error: ${err?.message}`);
+  }
+
+  async function createOrder(data, actions) {
+    return actions?.order
+      ?.create({
+        purchase_units: [
+          {
+            amount: { value: order.totalPrice },
+          },
+        ],
+      })
+      .then((orderId) => {
+        return orderId;
+      });
+  }
+
   return isLoading ? (
     <Loader />
   ) : isError ? (
@@ -162,6 +200,24 @@ const OrderScreen = () => {
                   <Col>Rs. {order?.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  {payLoading && <Loader />}
+                  {isPending ? (
+                    <Loader />
+                  ) : (
+                    <div>
+                      <div>
+                        <PayPalButtons
+                          onApprove={onApprove}
+                          onError={onError}
+                          createOrder={createOrder}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
