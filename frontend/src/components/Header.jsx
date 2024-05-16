@@ -71,6 +71,19 @@ export default function Header() {
                   </Nav.Link>
                 </LinkContainer>
               )}
+              {userInformation && userInformation.isAdmin && (
+                <NavDropdown title={userInformation?.name} id="username">
+                  <LinkContainer to="/admin/products">
+                    <NavDropdown.Item>Products</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/orders">
+                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/users">
+                    <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
               {/* <Nav.Link href="/register">Register</Nav.Link> */}
             </Nav>
           </Navbar.Collapse>

@@ -1,4 +1,5 @@
 import Order from "../models/Order.model.js";
+import User from "../models/User.model.js";
 
 const getUserOrders = async (req, res, next) => {
   try {
@@ -17,7 +18,11 @@ const getUserOrders = async (req, res, next) => {
 const getOrderById = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const order = await Order.findById(id).populate("user", "name email");
+    const order = await Order.findById(id).populate({
+      path: "user",
+      model: User,
+      select: "name email",
+    });
     if (order) {
       res.status(200).json(order);
     } else {
@@ -58,9 +63,18 @@ const updateOrderToPaid = async (req, res, next) => {
 };
 
 const updateOrderToDelivered = async (req, res, next) => {
+  const { id } = req.params;
   try {
-    // const products = await Order.find({});
-    res.json("Update Order to deliverd");
+    const order = await Order.findById(id);
+    if (order) {
+      order.isDelivered = true;
+      order.deliveredAt = Date.now();
+
+      const updatedOrder = await order.save();
+      res.json(updatedOrder);
+    } else {
+      throw new Error("No order found");
+    }
   } catch (error) {
     next(error);
 
@@ -108,8 +122,12 @@ const addOrderItems = async (req, res, next) => {
 
 const getAllOrders = async (req, res, next) => {
   try {
-    // const products = await Order.find({});
-    res.json("Get all Orders");
+    const products = await Order.find({}).populate({
+      model: User,
+      path: "user",
+      select: "name email",
+    });
+    res.json(products);
   } catch (error) {
     next(error);
 
