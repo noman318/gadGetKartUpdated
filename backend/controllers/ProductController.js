@@ -50,6 +50,41 @@ const createProduct = async (req, res, next) => {
   }
 };
 
+const updateProduct = async (req, res, next) => {
+  const { id } = req.params;
+  const {
+    name,
+    description,
+    category,
+    brand,
+    price,
+    image,
+    countInStock,
+    numReviews,
+  } = req.body;
+  try {
+    const product = await Product.findById(id);
+    if (product) {
+      product.name = name;
+      product.description = description;
+      product.category = category;
+      product.numReviews = numReviews;
+      product.price = price;
+      product.image = image;
+      product.brand = brand;
+      product.countInStock = countInStock;
+
+      const updatedProduct = await product.save();
+      return res.status(201).json(updatedProduct);
+    } else {
+      throw new Error("Product not found");
+    }
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
+};
+
 const deleteProductById = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -61,4 +96,10 @@ const deleteProductById = async (req, res, next) => {
   }
 };
 
-export { getAllProducts, getProductById, deleteProductById, createProduct };
+export {
+  getAllProducts,
+  getProductById,
+  deleteProductById,
+  createProduct,
+  updateProduct,
+};
