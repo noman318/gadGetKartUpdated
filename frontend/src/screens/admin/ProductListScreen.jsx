@@ -7,7 +7,6 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import { useParams } from "react-router-dom";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 import { toast } from "react-toastify";
@@ -55,7 +54,7 @@ const ProductListScreen = () => {
         <Col>
           <h1>Products</h1>
         </Col>
-        <Col>
+        <Col className="text-end">
           <Button
             className="btn-sm m-3"
             onClick={handleCreateProduct}

@@ -52,31 +52,24 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   const { id } = req.params;
-  const {
-    name,
-    description,
-    category,
-    brand,
-    price,
-    image,
-    countInStock,
-    numReviews,
-  } = req.body;
+  const { name, description, category, brand, price, image, countInStock } =
+    req.body;
   try {
     const product = await Product.findById(id);
+
     if (product) {
       product.name = name;
-      product.description = description;
-      product.category = category;
-      product.numReviews = numReviews;
       product.price = price;
+      product.description = description;
       product.image = image;
       product.brand = brand;
+      product.category = category;
       product.countInStock = countInStock;
 
       const updatedProduct = await product.save();
-      return res.status(201).json(updatedProduct);
+      res.json(updatedProduct);
     } else {
+      res.status(404);
       throw new Error("Product not found");
     }
   } catch (error) {
