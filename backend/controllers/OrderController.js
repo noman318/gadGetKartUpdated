@@ -1,5 +1,8 @@
 import Order from "../models/Order.model.js";
 import User from "../models/User.model.js";
+import Product from "../models/Product.model.js";
+import { calcPrices } from "../utils/calcPrices.js";
+import { checkIfNewTransaction, verifyPayPalPayment } from "../utils/paypal.js";
 
 const getUserOrders = async (req, res, next) => {
   try {
@@ -39,6 +42,12 @@ const updateOrderToPaid = async (req, res, next) => {
   const { id } = req.params;
   try {
     // const products = await Order.find({});
+    const { verified, value } = await verifyPayPalPayment(req.body.id);
+    if (!verified) throw new Error("Payment not verified");
+
+    // check if this transaction has been used before
+    const isNewTransaction = await checkIfNewTransaction(Order, req.body.id);
+    if (!isNewTransaction) throw new Error("Transaction has been used before");
     const order = await Order.findById(id);
     if (order) {
       order.isPaid = true;
@@ -83,19 +92,32 @@ const updateOrderToDelivered = async (req, res, next) => {
 };
 
 const addOrderItems = async (req, res, next) => {
-  const {
-    orderItems,
-    shippingAddress,
-    paymentMethod,
-    itemsPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-  } = req.body;
+  const { orderItems, shippingAddress, paymentMethod } = req.body;
   try {
     if (orderItems && orderItems.length === 0) {
       throw new Error("No order Items");
     } else {
+      const itemsFromDB = await Product.find({
+        _id: { $in: orderItems.map((x) => x._id) },
+      });
+
+      // map over the order items and use the price from our items from database
+      const dbOrderItems = orderItems.map((itemFromClient) => {
+        const matchingItemFromDB = itemsFromDB.find(
+          (itemFromDB) => itemFromDB._id.toString() === itemFromClient._id
+        );
+        return {
+          ...itemFromClient,
+          product: itemFromClient._id,
+          price: matchingItemFromDB.price,
+          _id: undefined,
+        };
+      });
+
+      // calculate prices
+      const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
+        calcPrices(dbOrderItems);
+
       const order = new Order({
         orderItems: orderItems?.map((item) => ({
           ...item,
