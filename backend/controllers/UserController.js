@@ -174,15 +174,63 @@ const getAllUsers = async (req, res, next) => {
 };
 
 const getUserById = async (req, res, next) => {
-  res.json({ message: "get user Data" });
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      return res.json(user);
+    } else {
+      throw new Error("No user found");
+    }
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
 };
 
 const deleteUser = async (req, res, next) => {
-  res.json({ message: "delete user" });
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      if (user.isAdmin) {
+        res.status(400);
+        throw new Error("Cannont delete Admin");
+      } else {
+        const deltedUser = await User.deleteOne({ _id: id });
+        return res.json(deltedUser);
+      }
+    } else {
+      throw new Error("No user found");
+    }
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
 };
 
 const updateUser = async (req, res, next) => {
-  res.json({ message: "get user Data" });
+  const { id } = req.params;
+  const { email, name, isAdmin } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      if (user) {
+        user.name = name;
+        user.email = email;
+        user.isAdmin = Boolean(isAdmin);
+
+        const updatedUser = await user.save();
+        return res.json(updatedUser);
+      } else {
+        res.status(400);
+      }
+    }
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
 };
 
 export {
