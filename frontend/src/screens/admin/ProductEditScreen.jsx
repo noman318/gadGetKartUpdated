@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
-import FormContainer from "../../components/FormContainer";
 import { toast } from "react-toastify";
+import FormContainer from "../../components/FormContainer";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
 import {
   useGetProductByIdQuery,
   useUpdateProductMutation,
+  useUploadProductImageMutation,
 } from "../../slices/productsApiSlice";
 
 const ProductEditScreen = () => {
@@ -30,7 +31,8 @@ const ProductEditScreen = () => {
 
   const [updateProduct, { isLoading: loadingProjectUpdate }] =
     useUpdateProductMutation();
-
+  const [uploadImage, { isLoading: loadingUpload }] =
+    useUploadProductImageMutation();
   useEffect(() => {
     if (product) {
       setPrice(product.price);
@@ -61,6 +63,19 @@ const ProductEditScreen = () => {
       navigate("/admin/products");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
+    }
+  };
+  const handleUploadImage = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+    // console.log("e.target.files[0]", e.target.files[0]);
+    try {
+      const res = await uploadImage(formData).unwrap();
+      console.log("res", res);
+      toast.success(res?.message);
+      setImage(res?.image);
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
     }
   };
   return (
@@ -105,9 +120,10 @@ const ProductEditScreen = () => {
               ></Form.Control>
               <Form.Control
                 label="Choose File"
-                // onChange={uploadFileHandler}
+                onChange={handleUploadImage}
                 type="file"
               ></Form.Control>
+              {loadingUpload && <Loader />}
             </Form.Group>
             <Form.Group controlId="brand">
               <Form.Label>Brand</Form.Label>
