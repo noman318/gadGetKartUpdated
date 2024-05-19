@@ -9,6 +9,7 @@ import {
   updateProduct,
 } from "../controllers/ProductController.js";
 import { admin, protect } from "../middleware/authMiddleware.js";
+import checkObjectId from "../middleware/checkObjectId.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.route("/top").get(getTopProduct);
 
 router
   .route("/:id")
-  .get(getProductById)
+  .get(checkObjectId, getProductById)
   .delete(protect, admin, deleteProductById)
   .put(protect, admin, updateProduct);
 

@@ -32,7 +32,7 @@ const ProductScreen = () => {
   const {
     data: product,
     isLoading,
-    isError: error,
+    error,
     refetch,
   } = useGetProductByIdQuery(productId);
   // console.log("qty", qty);

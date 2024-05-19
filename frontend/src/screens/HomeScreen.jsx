@@ -14,7 +14,7 @@ export default function HomeScreen() {
   const {
     data: products,
     isLoading,
-    isError: error,
+    error,
   } = useGetProductsQuery({ keyword, pageNumber });
   // console.log("products", products);
   return (

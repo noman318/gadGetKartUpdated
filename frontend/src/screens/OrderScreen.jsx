@@ -18,7 +18,7 @@ const OrderScreen = () => {
   const {
     data: order,
     isLoading,
-    isError,
+    error,
     refetch,
   } = useGetOrderByIdQuery(orderId);
 
@@ -103,7 +103,7 @@ const OrderScreen = () => {
 
   return isLoading ? (
     <Loader />
-  ) : isError ? (
+  ) : error ? (
     <Message variant={"danger"} />
   ) : (
     <>

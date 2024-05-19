@@ -23,7 +23,7 @@ const ProfileScreen = () => {
   const {
     data: orders,
     isLoading: loadingOrders,
-    isError,
+    error,
   } = useGetMyOrdersQuery();
   // console.log("orders", orders);
   useEffect(() => {
@@ -111,9 +111,9 @@ const ProfileScreen = () => {
           <h2>{orders && orders.length > 0 ? "Orders" : "No Orders"}</h2>
           {loadingOrders ? (
             <Loader />
-          ) : isError ? (
+          ) : error ? (
             <Message variant={"danger"}>
-              {isError?.data?.message || isError.error}
+              {error?.data?.message || error.error}
             </Message>
           ) : (
             <>

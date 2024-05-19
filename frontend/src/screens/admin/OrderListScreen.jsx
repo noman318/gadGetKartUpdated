@@ -6,16 +6,18 @@ import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { useGetOrdersQuery } from "../../slices/orderApiSlice";
 const OrderListScreen = () => {
-  const { data: orders, isLoading, isError } = useGetOrdersQuery();
+  const { data: orders, isLoading, error } = useGetOrdersQuery();
   console.log("orders", orders);
   return (
     <div>
       <h1>Orders</h1>
       {isLoading ? (
         <Loader />
-      ) : isError ? (
+      ) : error ? (
         <>
-          <Message variant={"danger"}>{isError}</Message>
+          <Message variant={"danger"}>
+            {error?.data?.message || error.error}
+          </Message>
         </>
       ) : (
         <Table striped hover responsive className="table-sm">

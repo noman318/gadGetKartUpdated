@@ -11,7 +11,7 @@ import { FaCheck, FaEdit, FaTimes, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const UserListScreen = () => {
-  const { data: users, isLoading, refetch, isError } = useGetAllUsersQuery({});
+  const { data: users, isLoading, refetch, error } = useGetAllUsersQuery({});
   //   console.log("users", users);
   const [deleteUser, { isLoading: loadingDeleteUser }] =
     useDeleteUsersMutation();
@@ -40,8 +40,10 @@ const UserListScreen = () => {
       <h1>Users</h1>
       {isLoading ? (
         <Loader />
-      ) : isError ? (
-        <Message variant={"danger"}>{isError}</Message>
+      ) : error ? (
+        <Message variant={"danger"}>
+          {error?.data?.message || error.error}
+        </Message>
       ) : (
         <>
           <Table striped bordered hover responsive className="table-sm">
