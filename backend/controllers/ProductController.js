@@ -1,7 +1,7 @@
 import Product from "../models/Product.model.js";
 
 const getAllProducts = async (req, res, next) => {
-  const pageSize = 1;
+  const pageSize = process.env.PAGE_SIZE || 6;
   const page = Number(req.query.pageNumber) || 1;
   const keyword = req.query.keyword
     ? { name: { $regex: req.query.keyword, $options: "i" } }
@@ -134,6 +134,20 @@ const addProductReview = async (req, res, next) => {
   }
 };
 
+const getTopProduct = async (req, res, next) => {
+  try {
+    const products = await Product.find({}).sort({ rating: -1 }).limit(3);
+    if (products) {
+      return res.json(products);
+    }
+    res.status(404);
+    throw new Error("Product Not Found");
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
+};
+
 export {
   getAllProducts,
   getProductById,
@@ -141,4 +155,5 @@ export {
   createProduct,
   updateProduct,
   addProductReview,
+  getTopProduct,
 };

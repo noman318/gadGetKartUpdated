@@ -1,12 +1,13 @@
 import React from "react";
 // eslint-disable-next-line
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Button } from "react-bootstrap";
 import Product from "../components/Product";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PaginateComponent from "../components/Paginate";
+import ProductCarousel from "../components/ProductCarousel";
 
 export default function HomeScreen() {
   const { pageNumber, keyword } = useParams();
@@ -18,6 +19,13 @@ export default function HomeScreen() {
   // console.log("products", products);
   return (
     <React.Fragment>
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
+        <Link to={`/`} className="btn btn-light mb-4">
+          Go Back
+        </Link>
+      )}
       {isLoading ? (
         <div>
           <Loader />

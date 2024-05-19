@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../slices/authSlice";
 import { toast } from "react-toastify";
+import Search from "./Search";
 
 export default function Header() {
   const { cartItems } = useSelector((state) => state.cart);
@@ -44,6 +45,7 @@ export default function Header() {
           <Navbar.Toggle aria-controls="basic-navbar" />
           <Navbar.Collapse id="basic-navbar">
             <Nav className="ms-auto">
+              <Search />
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <FaShoppingCart />
