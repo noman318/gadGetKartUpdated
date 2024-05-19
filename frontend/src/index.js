@@ -38,6 +38,12 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} path="/" element={<HomeScreen />} />
+      <Route path="/search/:keyword" element={<HomeScreen />} />
+      <Route path="/page/:pageNumber" element={<HomeScreen />} />
+      <Route
+        path="/search/:keyword/page/:pageNumber"
+        element={<HomeScreen />}
+      />
       <Route path="/product/:id" element={<ProductScreen />} />
       <Route path="/order/:id" element={<OrderScreen />} />
       <Route path="/cart" element={<CartScreen />} />
@@ -54,6 +60,10 @@ const router = createBrowserRouter(
       <Route path="" element={<AdminRoute />}>
         <Route path="/admin/orders" element={<OrderListScreen />} />
         <Route path="/admin/products" element={<ProductListScreen />} />
+        <Route
+          path="/admin/products/:pageNumber"
+          element={<ProductListScreen />}
+        />
         <Route path="/admin/users" element={<UserListScreen />} />
         <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
         <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />

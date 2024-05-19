@@ -10,13 +10,22 @@ import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import PaginateComponent from "../../components/Paginate";
 const ProductListScreen = () => {
-  const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+  const { pageNumber } = useParams();
+  const {
+    data: products,
+    isLoading,
+    error,
+    refetch,
+  } = useGetProductsQuery({ pageNumber });
+
   const [deleteProduct, { isLoading: loadingDeleteProduct }] =
     useDeleteProductByIdMutation();
   const [createProduct, { isLoading: productLoading }] =
     useCreateProductMutation();
-  //   console.log("products", products);
+  console.log("products", products);
   const handleCreateProduct = async () => {
     try {
       if (window.confirm("You want to create New product")) {
@@ -82,7 +91,7 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {products?.map((product) => (
+              {products?.products?.map((product) => (
                 <tr key={product?._id}>
                   <td>{product._id}</td>
                   <td>{product?.name}</td>
@@ -108,6 +117,11 @@ const ProductListScreen = () => {
               ))}
             </tbody>
           </Table>
+          <PaginateComponent
+            page={products.page}
+            pages={products.pages}
+            isAdmin={true}
+          />
         </>
       )}
     </>

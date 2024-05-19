@@ -1,10 +1,18 @@
 import Product from "../models/Product.model.js";
 
 const getAllProducts = async (req, res, next) => {
+  const pageSize = 1;
+  const page = Number(req.query.pageNumber) || 1;
+  const keyword = req.query.keyword
+    ? { name: { $regex: req.query.keyword, $options: "i" } }
+    : {};
   try {
-    const products = await Product.find({});
+    const count = await Product.countDocuments({ ...keyword });
+    const products = await Product.find({ ...keyword })
+      .limit(pageSize)
+      .skip(pageSize * (page - 1));
     if (products) {
-      return res.json(products);
+      return res.json({ products, page, pages: Math.ceil(count / pageSize) });
     }
     throw new Error("Products not found try again");
   } catch (error) {
@@ -89,10 +97,48 @@ const deleteProductById = async (req, res, next) => {
   }
 };
 
+const addProductReview = async (req, res, next) => {
+  const { rating, comment } = req.body;
+  const { id } = req.params;
+  try {
+    const product = await Product.findById(id);
+    if (product) {
+      const alreadyReviewd = product.reviews?.find(
+        (review) => review.user.toString() === req.user._id.toString()
+      );
+      console.log("alreadyReviewd", alreadyReviewd);
+      if (alreadyReviewd) {
+        throw new Error("Product already reviwed");
+      }
+      const review = {
+        name: req.user.name,
+        rating,
+        comment,
+        user: req.user._id,
+      };
+      product.reviews.push(review);
+
+      product.numReviews = product.reviews.length;
+
+      product.rating = product.reviews?.reduce(
+        (acc, review) => acc + review.rating,
+        0
+      );
+
+      await product.save();
+      res.status(201).json({ message: "Review Added" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
+};
+
 export {
   getAllProducts,
   getProductById,
   deleteProductById,
   createProduct,
   updateProduct,
+  addProductReview,
 };
