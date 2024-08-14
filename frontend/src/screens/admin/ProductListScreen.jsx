@@ -84,7 +84,7 @@ const ProductListScreen = () => {
           <Table striped hover responsive className="table-sm">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Sr. No.</th>
                 <th>NAME</th>
                 <th>PRICE</th>
                 <th>CATEGORY</th>
@@ -93,9 +93,9 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {products?.products?.map((product) => (
+              {products?.products?.map((product, index) => (
                 <tr key={product?._id}>
-                  <td>{product._id}</td>
+                  <td>{index + 1}</td>
                   <td>{product?.name}</td>
                   <td>Rs. {product?.price}</td>
                   <td>{product?.category}</td>
